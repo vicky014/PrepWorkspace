@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import com.practise.model.Employee;
@@ -110,7 +111,13 @@ public class PrepComparator {
 		resultEmpList1.forEach(x -> System.out.println(x));
 
 		
+		List<Integer> intList1 = Arrays.asList(1,2,3,4,5,5,1);
+		
+		intList1.stream().distinct().forEach(x -> System.out.println("distinct : "+x));
+		
 				
+		Consumer<String> upperPrinter = str -> System.out.println(str.toUpperCase());
+        upperPrinter.accept("vikram"); // Output: VIKRAM
 		
 		
 	}

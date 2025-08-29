@@ -10,7 +10,6 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@AllArgsConstructor
 @Setter
 @Getter
 public class Employee {
@@ -26,14 +25,6 @@ public class Employee {
 	
 	@Column
 	Integer salary;
-
-	public Employee(int empId, String name, double percentage, Integer salary) {
-		super();
-		this.empId = empId;
-		this.name = name;
-		this.percentage = percentage;
-		this.salary = salary;
-	}
 
 	public int getEmpId() {
 		return empId;
@@ -64,6 +55,15 @@ public class Employee {
 	}
 
 	public void setSalary(Integer salary) {
+		this.salary = salary;
+	}
+
+	
+	public Employee(int empId, String name, double percentage, Integer salary) {
+		super();
+		this.empId = empId;
+		this.name = name;
+		this.percentage = percentage;
 		this.salary = salary;
 	}
 
