@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import com.practise.model.Employee;
+import com.practise.prep.model.Employee;
 
 public class PrepComparator {
 
