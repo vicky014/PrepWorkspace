@@ -3,9 +3,11 @@ package com.springsec.test.configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -14,6 +16,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.springsec.test.service.JwtService;
 
 
 @Configuration
@@ -23,15 +28,22 @@ public class SecurityConfig {
 	@Autowired
 	private UserDetailsService userDetailsService;
 	
+	@Autowired
+	private JwtFilter jwtFilter;
+	
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		
     	return http
     		.csrf(csrf -> csrf.disable()) //disabling it for STATLESS REST APi where we dont want to manage session ID's
-    		.authorizeHttpRequests(req -> req.anyRequest().authenticated())
-    		.formLogin(Customizer.withDefaults())
+    		.authorizeHttpRequests(req -> req
+                    .requestMatchers("register","login").permitAll()
+                    .anyRequest().authenticated())
+//    		.formLogin(Customizer.withDefaults())
     		.httpBasic(Customizer.withDefaults())//to enable rest calls
-    		.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)).build();
+    		.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+    		.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+    		.build();
 		
     	/*in browser post this config whenever we login a new request is generated 
     	and again a login screen is shown to overcome this we have to disable the 
@@ -50,9 +62,9 @@ public class SecurityConfig {
     	
     }
     
-//    @Bean
-//    UserDetailsService userDetailsService(){
-//    	
-//    	return new InMemoryUserDetailsManager();
-//    }
+    @Bean
+    AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception{
+    	
+    	return config.getAuthenticationManager();
+    }
 }
